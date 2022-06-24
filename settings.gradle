@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "obeid1"
+rootProject.name = "Radius_t_AndroidApp"
 include ':app'

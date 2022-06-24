@@ -1,14 +1,6 @@
-package com.example.obeid1;
+package com.example.Radius_t_AndroidApp;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
-import android.os.Bundle;
-import android.os.Handler;
 
 public class DeviceScannerActivity extends AppCompatActivity {
 

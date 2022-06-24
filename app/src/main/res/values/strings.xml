@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">obeid1</string>
+    <string name="app_name">Radius_t_AndroidApp</string>
+    <string name="ble_not_supported">square 1</string>
 </resources>
