@@ -2,21 +2,29 @@ package com.example.Radius_t_AndroidApp;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,8 +33,18 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String[] BLE_PERMISSIONS = new String[]{
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
 
-    View checker;
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private static final String[] ANDROID_12_BLE_PERMISSIONS = new String[]{
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT
+    };
+
+    TextView checker;
 
     boolean scanning;
     Handler handler;
@@ -39,20 +57,20 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     // Device scan callback.
-    private ScanCallback leScanCallback =
+    private final ScanCallback leScanCallback =
             new ScanCallback() {
 
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
-                    checker.setVisibility(View.VISIBLE);
+
                     leDeviceListAdapter.addDevice(result.getDevice());
                     leDeviceListAdapter.notifyDataSetChanged();
 
                     if (result != null) {
-
+                        checker.setVisibility(View.VISIBLE);
+                        checker.setText(result.getDevice().getName());
                     }
-
                 }
             };
 
@@ -60,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        requestBlePermissions(MainActivity.this, 1);
 
         handler = new Handler();
         SCAN_PERIOD = 10000;
@@ -72,24 +92,24 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = bluetoothManager.getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        checker = findViewById(R.id.check);
+        checker = (TextView) findViewById(R.id.check);
         checker.setVisibility(View.INVISIBLE);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            //checker.setVisibility(View.VISIBLE);
-        }
-
-
 
         Button startScan = (Button) findViewById(R.id.scanBtn);
         startScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 scanLeDevice();
             }
         });
 
+    }
+
+    public static void requestBlePermissions(Activity activity, int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            ActivityCompat.requestPermissions(activity, ANDROID_12_BLE_PERMISSIONS, requestCode);
+        else
+            ActivityCompat.requestPermissions(activity, BLE_PERMISSIONS, requestCode);
     }
 
     public void scanLeDevice() {

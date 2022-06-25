@@ -1,7 +1,9 @@
 package com.example.Radius_t_AndroidApp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.bluetooth.*;
 
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -36,7 +39,8 @@ public class LeDeviceListAdapter extends RecyclerView.Adapter<LeDeviceListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-       String deviceName = mData.get(position).getName();
+
+        String deviceName = mData.get(position).getName();
         holder.tv.setText(deviceName);
 
     }
